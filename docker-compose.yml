@@ -1,0 +1,28 @@
+services:
+  mongo:
+    image: mongo:8
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  api:
+    build: ./server
+    environment:
+      PORT: 4100
+      MONGO_URL: mongodb://mongo:27017/workflowqueue
+      JWT_SECRET: change-me-in-production
+    ports:
+      - "4100:4100"
+    depends_on:
+      - mongo
+
+  client:
+    build: ./client
+    ports:
+      - "5174:5173"
+    depends_on:
+      - api
+
+volumes:
+  mongo-data:
